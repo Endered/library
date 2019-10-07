@@ -1,0 +1,34 @@
+#!/bin/bash
+if [ ${1##*.} != cpp ]; then
+	return
+fi
+str=`g++ $1 2>&1`
+if [ "$str" != "" ]; then
+	g++ $1 2>&1 | less
+return
+fi
+if [ -e input ]; then
+	./a.out < input
+fi
+if [ -e test.out ];then
+	rm test.out
+fi
+if [ -e inputs ]; then
+	for i in `ls ./inputs/*.in`
+	do
+		echo now is $i
+		echo now is $i >> test.out
+		echo input~~~~~~~~~~~ >> test.out
+		cat $i >> test.out
+		echo output~~~~~~~~~~ >> test.out
+		./a.out < $i >> test.out
+		if [ -e ${i%.*}.sampleout ];then
+			echo %sampleout~~~~~~ >> test.out
+			cat ${i%.*}.sampleout >> test.out
+		fi
+		echo end $i >> test.out
+		echo >> test.out
+		echo >> test.out
+	done
+fi
+

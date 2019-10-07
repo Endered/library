@@ -1,0 +1,9 @@
+#!/bin/bash
+
+select i in `ls ${HOME}/wallpaper/`
+do
+    gsettings set org.gnome.desktop.background picture-uri "$HOME/wallpaper/$i"
+    break
+done
+
+
