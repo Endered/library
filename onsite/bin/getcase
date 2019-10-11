@@ -1,0 +1,34 @@
+#!/usr/bin/python3
+
+import requests
+import os
+import shutil
+from bs4 import BeautifulSoup
+
+def refleshdirectory():
+	if os.path.isdir("./inputs"):
+		shutil.rmtree("./inputs")
+	os.mkdir("./inputs")
+
+
+print("Please input url")
+url = input()
+req = requests.get(url)
+soup = BeautifulSoup(req.content, "html.parser")
+pre = soup.select("pre")
+
+refleshdirectory()
+os.chdir("./inputs")
+
+
+for i, j in zip(pre, range(len(pre))):
+	if j == 0:
+		continue
+	num = (j+1)//2
+	if(j&1):
+		with open(str(num)+".in", "w") as f:
+			f.write(i.text)
+	else:
+		with open(str(num)+".sampleout", "w") as f:
+			f.write(i.text)
+

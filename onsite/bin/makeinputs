@@ -1,0 +1,12 @@
+#!/bin/bash
+rm -r inputs
+mkdir inputs
+i=1
+while :
+do
+	echo GO!
+	str=`cat`
+	echo "$str" > ./inputs/$i.in
+	echo "no sample output" > ./inputs/$i.sampleout
+	i=`expr $i + 1`
+done

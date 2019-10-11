@@ -1,0 +1,37 @@
+syntax on
+set number
+set cursorline
+set showmatch
+set autoindent
+set tabstop=4
+set shiftwidth=4
+set backspace=indent,eol,start
+set clipboard=unnamedplus
+set whichwrap=h,l,<,>,[,]
+set nowrap
+
+set scrolloff=10
+set hlsearch
+set matchpairs& matchpairs+=<:>
+set makeprg=g++\ %:S
+
+inoremap {<ENTER> {}<LEFT><CR><ESC><S-o>
+inoremap jj <ESC>
+inoremap , ,<SPACE>
+inoremap qq <ESC>
+nnoremap <C-a> ggVG
+nnoremap <C-i> mIggVG=`I
+nnoremap x "_x
+nnoremap s "_s
+filetype on
+augroup language
+	autocmd!
+	autocmd FileType cpp setl cindent
+	autocmd FileType cpp set cinkeys+=*;
+	autocmd FileType cpp nnoremap <S-a> A;<ESC>=<CR>A<C-h>
+	autocmd FileType cpp set syntax=cpp
+	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
+	autocmd FileType cpp nnoremap <F5> <ESC>:!makeinputs<CR>
+	autocmd FileType cpp nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
+augroup END
+
