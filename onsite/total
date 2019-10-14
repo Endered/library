@@ -1,0 +1,150 @@
+#bashrc
+stty erase '^?'
+alias g++='g++ -std=gnu++14'
+
+#tmp.cpp
+#include<bits/stdc++.h>
+#define ll long long
+#define rep(i, n) for(int i=0;i<(n);++i)
+#define per(i, n) for(int i=(n)-1;i>=0;--i)
+#define repa(i, n) for(int i=1;i<(n);++i)
+#define foreach(i, n) for(auto &i:(n))
+#define pii pair<int, int>
+#define pll pair<long long, long long>
+#define all(x) (x).begin(), (x).end()
+#define bit(x) (1ll << (x))
+const ll MOD = (ll)1e9+7;
+const int INF = (ll)1e9+7;
+const ll INFLL = (ll)1e18;
+using namespace std;
+template<class t>
+using vvector = vector<vector<t>>;
+template<class t>
+using vvvector = vector<vector<vector<t>>>;
+template<class t>
+using priority_queuer = priority_queue<t, vector<t>, greater<t>>;
+template<class t, class u> bool chmax(t &a, u b){if(a<b){a=b;return true;}return false;}
+template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return false;}
+
+#vimrc
+syntax on
+set number
+set cursorline
+set showmatch
+set autoindent
+set tabstop=4
+set shiftwidth=4
+set backspace=indent,eol,start
+set clipboard=unnamedplus
+set whichwrap=h,l,<,>,[,]
+set nowrap
+
+set scrolloff=10
+set hlsearch
+set matchpairs& matchpairs+=<:>
+set makeprg=g++\ %:S
+
+inoremap {<ENTER> {}<LEFT><CR><ESC><S-o>
+inoremap jj <ESC>
+inoremap , ,<SPACE>
+inoremap qq <ESC>
+nnoremap <C-a> ggVG
+nnoremap <C-i> mIggVG=`I
+nnoremap x "_x
+nnoremap s "_s
+filetype on
+augroup language
+	autocmd!
+	autocmd FileType cpp setl cindent
+	autocmd FileType cpp set cinkeys+=*;
+	autocmd FileType cpp nnoremap <S-a> A;<ESC>=<CR>A<C-h>
+	autocmd FileType cpp set syntax=cpp
+	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
+	autocmd FileType cpp nnoremap <F5> <ESC>:!makeinputs<CR>
+	autocmd FileType cpp nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
+augroup END
+
+#gettestcase
+#!/usr/bin/python3
+
+import requests
+import os
+import shutil
+from bs4 import BeautifulSoup
+
+def refleshdirectory():
+	if os.path.isdir("./inputs"):
+		shutil.rmtree("./inputs")
+	os.mkdir("./inputs")
+
+
+print("Please input url")
+url = input()
+req = requests.get(url)
+soup = BeautifulSoup(req.content, "html.parser")
+pre = soup.select("pre")
+
+refleshdirectory()
+os.chdir("./inputs")
+
+
+for i, j in zip(pre, range(len(pre))):
+	if j == 0:
+		continue
+	num = (j+1)//2
+	if(j&1):
+		with open(str(num)+".in", "w") as f:
+			f.write(i.text)
+	else:
+		with open(str(num)+".sampleout", "w") as f:
+			f.write(i.text)
+
+#makeinput
+#!/bin/bash
+rm -r inputs
+mkdir inputs
+i=1
+while :
+do
+	echo GO!
+	str=`cat`
+	echo "$str" > ./inputs/$i.in
+	echo "no sample output" > ./inputs/$i.sampleout
+	i=`expr $i + 1`
+done
+
+#testcase
+#!/bin/bash
+if [ ${1##*.} != cpp ]; then
+	return
+fi
+str=`g++ $1 2>&1`
+if [ "$str" != "" ]; then
+	g++ $1 2>&1 | less
+return
+fi
+if [ -e input ]; then
+	./a.out < input
+fi
+if [ -e test.out ];then
+	rm test.out
+fi
+if [ -e inputs ]; then
+	for i in `ls ./inputs/*.in`
+	do
+		echo now is $i
+		echo now is $i >> test.out
+		echo input~~~~~~~~~~~ >> test.out
+		cat $i >> test.out
+		echo output~~~~~~~~~~ >> test.out
+		./a.out < $i >> test.out
+		if [ -e ${i%.*}.sampleout ];then
+			echo %sampleout~~~~~~ >> test.out
+			cat ${i%.*}.sampleout >> test.out
+		fi
+		echo end $i >> test.out
+		echo >> test.out
+		echo >> test.out
+	done
+fi
+
