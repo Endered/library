@@ -29,9 +29,6 @@ augroup language
 	autocmd FileType cpp setl cindent
 	autocmd FileType cpp set cinkeys+=*;
 	autocmd FileType cpp nnoremap <S-a> A;<ESC>=<CR>A<C-h>
-	autocmd FileType cpp set syntax=cpp
 	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
-	autocmd FileType cpp nnoremap <F5> <ESC>:!makeinputs<CR>
-	autocmd FileType cpp nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
 augroup END
 
