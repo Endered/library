@@ -17,6 +17,9 @@ set backupdir=~/.vim_files
 set undofile
 set undodir=~/.vim_files
 
+"fold according current syntax
+set foldmethod=syntax
+
 set scrolloff=10
 set hlsearch
 set matchpairs& matchpairs+=<:>
