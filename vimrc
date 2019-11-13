@@ -37,18 +37,22 @@ nnoremap s "_s
 filetype on
 augroup language
 	autocmd!
-	autocmd FileType cpp,c setl cindent
+	autocmd FileType cpp,c set cindent
 	autocmd FileType cpp,c set cinkeys+=*;
+	autocmd FileType cpp,c set cinoptions+=g0
 	autocmd FileType cpp,c nnoremap <S-a> A;<ESC>=<CR>A<C-h>
 	autocmd FileType cpp set syntax=cpp
-	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
-	autocmd FileType cpp nnoremap <F5> <ESC>:!makeinputs<CR>
-	autocmd FileType cpp nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
-	autocmd FileType cpp nnoremap <F7> :!getcase<CR>
+	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
+	autocmd FileType cpp,c nnoremap <F5> <ESC>:!makeinputs<CR>
+	autocmd FileType cpp,c nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
 	"autocmd BufWritePost *.cpp make
 	"autocmd BufWritePre *.cpp normal ggVG=<CR>  "indent clearly
 	autocmd FileType c set syntax=c
 	autocmd FileType r setl cindent
 	autocmd FileType r setl syntax=r
+	autocmd FileType lisp nnoremap <F4> <ESC>:w<CR>:!clisp %<CR>
+	autocmd FileType lisp nnoremap <F6> <ESC>:w<CR>ggVGy:!testlisp %<CR>:e ./test.out<CR>
 augroup END
 
+"this is get about atcoder input case
+nnoremap <F7> :!getcase<CR>
