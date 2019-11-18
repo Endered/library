@@ -2,10 +2,10 @@
 if [ ${1##*.} != cpp ]; then
 	return
 fi
-str=`g++ $1 2>&1`
+str=`g++ $1 -Wall -Wextra -fsyntax-only -DDEBUG`
 if [ "$str" != "" ]; then
-	g++ $1 2>&1 | less
-return
+	g++ $1 -Wall -Wextra -fsyntax-only -DDEBUG 2>&1 | less
+	return
 fi
 if [ -e input ]; then
 	./a.out < input
