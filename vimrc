@@ -56,9 +56,10 @@ augroup language
 	autocmd FileType cpp,c set cinoptions+=g0
 	autocmd FileType cpp,c nnoremap <S-a> A;<ESC>=<CR>A<C-h>
 	autocmd FileType cpp set syntax=cpp
-	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
+	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:call Set_error_sign()<CR>
 	autocmd FileType cpp,c nnoremap <F5> <ESC>:!makeinputs<CR>
 	autocmd FileType cpp,c nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
+	autocmd BufWritePost *.cpp call Set_error_sign()
 	"autocmd BufWritePost *.cpp make
 	"autocmd BufWritePre *.cpp normal ggVG=<CR>  "indent clearly
 	autocmd FileType c set syntax=c
@@ -78,3 +79,24 @@ augroup END
 
 "this is get about atcoder input case
 nnoremap <F7> :!getcase<CR>
+
+
+"this set a sign on error
+sign define error_sign text=>> texthl=Error linehl=Error
+
+function! Set_error_sign()
+	exe "silent make\|redraw!\|"
+	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>:call Set_error_sign()<CR>
+	let error_lists = getqflist()
+	exe "sign unplace *"
+	let num = 1
+	let file_name = expand("%")
+	for i in error_lists
+		let line = i["lnum"]
+		if line == 0 
+			continue
+		endif
+		exe "sign place " . printf("%d", num) . " line=" . printf("%d", line) . " name=error_sign file=" . file_name
+		let num += 1
+	endfor
+endfunction
