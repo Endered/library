@@ -57,9 +57,9 @@ augroup language
 	autocmd FileType cpp,c nnoremap <S-a> A;<ESC>=<CR>A<C-h>
 	autocmd FileType cpp set syntax=cpp
 	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:call Set_error_sign()<CR>
-	autocmd FileType cpp,c nnoremap <F5> <ESC>:!makeinputs<CR>
-	autocmd FileType cpp,c nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
-	autocmd BufWritePost *.cpp call Set_error_sign()
+	autocmd FileType cpp nnoremap <F5> <ESC>:!makeinputs<CR>
+	autocmd FileType cpp nnoremap <F6> <ESC>:w<CR>ggVGy:!testcase %<CR>:e ./test.out<CR>
+	autocmd BufWritePost *.cpp,*.c call Set_error_sign()
 	"autocmd BufWritePost *.cpp make
 	"autocmd BufWritePre *.cpp normal ggVG=<CR>  "indent clearly
 	autocmd FileType c set syntax=c
@@ -86,9 +86,8 @@ sign define error_sign text=>> texthl=Error linehl=Error
 
 function! Set_error_sign()
 	exe "silent make\|redraw!\|"
-	autocmd FileType cpp,c nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>:call Set_error_sign()<CR>
-	let error_lists = getqflist()
 	exe "sign unplace *"
+	let error_lists = getqflist()
 	let num = 1
 	let file_name = expand("%")
 	for i in error_lists
