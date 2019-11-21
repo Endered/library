@@ -1,4 +1,4 @@
-syntax on
+syntax enable
 set number
 set cursorline
 set showmatch
@@ -8,13 +8,14 @@ set shiftwidth=4
 set backspace=indent,eol,start
 set clipboard=unnamedplus
 set whichwrap=h,l,<,>,[,]
-set nowrap
+set foldmethod=syntax
+set laststatus=2
 
 set scrolloff=10
 set hlsearch
 set matchpairs& matchpairs+=<:>
-set makeprg=g++\ %:S
 
+set makeprg=g++\ %:S\ -Wall\ -Wextra\ -fsyntax-only\ -DDEBUG
 inoremap {<ENTER> {}<LEFT><CR><ESC><S-o>
 inoremap jj <ESC>
 inoremap , ,<SPACE>
@@ -23,12 +24,30 @@ nnoremap <C-a> ggVG
 nnoremap <C-i> mIggVG=`I
 nnoremap x "_x
 nnoremap s "_s
+
 filetype on
 augroup language
 	autocmd!
-	autocmd FileType cpp setl cindent
+	autocmd FileType cpp set cindent
 	autocmd FileType cpp set cinkeys+=*;
 	autocmd FileType cpp nnoremap <S-a> A;<ESC>=<CR>A<C-h>
-	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:silent make\|redraw!\|cc<CR><CR>
+	autocmd FileType cpp nnoremap <F4> <ESC>:w<CR>:call Set_error_sign()<CR>
+	autocmd BufWritePost *.cpp call Set_error_sign()
 augroup END
 
+sign define error_sign text=>> texthl=Error linehl=Error
+function! Set_error_sign()
+	exe "silent make\|redraw!\|"
+	exe "sign unplace *"
+	let error_lists = getqflist()
+	let num = 1
+	let file_name = expand("%")
+	for i in error_lists
+		let line = i["lnum"]
+		if line == 0 
+			continue
+		endif
+		exe "sign place " . printf("%d", num) . " line=" . printf("%d", line) . " name=error_sign file=" . file_name
+		let num += 1
+	endfor
+endfunction
