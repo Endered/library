@@ -63,6 +63,7 @@ augroup language
 	"autocmd BufWritePost *.cpp make
 	"autocmd BufWritePre *.cpp normal ggVG=<CR>  "indent clearly
 	autocmd FileType c set syntax=c
+	autocmd FileType c set makeprg=gcc\ %:S\ -Wall\ -Wextra\ -fsyntax-only\ -DDEBUG
 	autocmd FileType r setl cindent
 	autocmd FileType r setl syntax=r
 	autocmd FileType lisp nnoremap <F4> <ESC>:w<CR>:!clisp %<CR>
