@@ -1,0 +1,10 @@
+#!/bin/bash
+
+names=`echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' | fold -s1`
+
+for name in $names
+do
+    if [ -e "$name" ]; then
+        rm $name -r
+    fi
+done

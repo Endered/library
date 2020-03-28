@@ -79,6 +79,44 @@ void out(t x){
   cout << x;
 }
 
+int n;
+vvector<pii> edges;
+int x;
+
+void setup(){
+  n = in();
+  x = in();
+  edges.resize(n);
+  rep(i,n-1){
+    int a = in() - 1;
+    int b = in() - 1;
+    int c = in();
+    edges[a].emplace_back(b,c);
+    edges[b].emplace_back(a,c);
+  }
+}
+
+
+ll solve(){
+  ll ans = 0;
+  map<int,ll> m;
+  m[0]=1;
+  function<void(int,int,int)> func =
+    [&](int place,int last,int sum){
+      foreach(i,edges[place]){
+        if(i.first==last)continue;
+        ans += m.count(sum^x^i.second)?m[sum^x^i.second]:0;
+        ++m[sum^i.second];
+        func(i.first,place,sum^i.second);
+      }
+    };
+  func(0,-1,0);
+  return ans;
+}
+
 int main(){
+  setup();
+
+  cout << solve() << endl;
   return 0;
 }

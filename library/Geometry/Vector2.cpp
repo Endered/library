@@ -19,11 +19,19 @@ class Vector2{
 		Vector2 operator-(Vector2 o){return Vector2(*this)-=o;}
 		Vector2 operator*(t o){return Vector2(*this)*=o;}
 		Vector2 operator/(t o){return Vector2(*this)/=o;}
+
+		double abs(){
+			return sqrt(x*x+y*y);
+		}
+
+		Vector2 normal(){
+			return (*this) / abs();
+		}
 };
 
 template<class t>
 double abs(Vector2<t> x){
-	return sqrt(x.x * x.x + x.y * x.y);
+	return x.abs();
 }
 
 template<class t>

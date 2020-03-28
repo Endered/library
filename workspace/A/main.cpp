@@ -79,6 +79,63 @@ void out(t x){
   cout << x;
 }
 
+pii nil = pii(INF,INF);
+vector<pii> dirs = {{1,0},{0,1},{-1,0},{0,-1}};
+map<pii,vector<pii>> m;
+
+int char2dir(char d){
+  if(d=='R')return 0;
+  if(d=='U')return 1;
+  if(d=='L')return 2;
+  if(d=='D')return 3;
+  return -1;
+}
+
+pii operator+(pii a,pii b){
+  return {a.first+b.first,a.second+b.second};
+}
+
+
+pii move(pii pos,int dir){
+  if(m[pos].empty())m[pos].assign(dirs.size(),nil);
+  pii &res = m[pos][dir];
+  if(res==nil){
+    res = pos + dirs[dir];
+  }
+  return res;
+}
+
+void apply(pii pos){
+  int n = dirs.size();
+  rep(front,n/2){
+    int back = front+n/2;
+    pii front_p = move(pos,front);
+    pii back_p = move(pos,back);
+    vector<pii>& front_it = m[front_p];
+    vector<pii>& back_it = m[back_p];
+    if(front_it.empty())front_it.assign(n,nil);
+    if(back_it.empty())back_it.assign(n,nil);
+    front_it[back] = back_p;
+    back_it[front] = front_p;
+  }
+}
+
+pii func(pii pos,int dir){
+  pii res = move(pos,dir);
+  apply(res);
+  return res;
+}
+
+
 int main(){
+  pii cp = {0,0};
+  int k = in();
+  string str;
+  in(str);
+  apply(cp);
+  foreach(i,str){
+    cp = func(cp,char2dir(i));
+  }
+  cout << cp.first << " " << cp.second << endl;
   return 0;
 }

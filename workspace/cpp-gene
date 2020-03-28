@@ -1,0 +1,17 @@
+#!/bin/bash
+
+./remove-files
+
+names=`echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' | fold -s1`
+
+read last
+
+for name in $names
+do
+    mkdir $name
+    cp main.cpp $name
+    cp Makefile $name
+    if [ "$name" == "$last" ]; then
+        break
+    fi
+done

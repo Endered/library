@@ -1,0 +1,17 @@
+#!/bin/bash
+
+./remove-files
+
+names=`echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' | fold -s1`
+
+read last
+
+for name in $names
+do
+    mkdir $name
+    cp lisp/main.lisp $name
+    cp lisp/header.lisp $name
+    if [ "$name" == "$last" ]; then
+        break
+    fi
+done
