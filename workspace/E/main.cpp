@@ -26,58 +26,79 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #define debug(x) (void)0
 #endif
 
-ll modpow(ll x, ll b){
-  ll res = 1;
-  while(b){
-    if(b&1)res = res * x % MOD;
-    x = x * x % MOD;
-    b>>=1;
+namespace templates{
+  ll modpow(ll x, ll b){
+    ll res = 1;
+    while(b){
+      if(b&1)res = res * x % MOD;
+      x = x * x % MOD;
+      b>>=1;
+    }
+    return res;
   }
-  return res;
+
+  ll modinv(ll x){
+    return modpow(x, MOD-2);
+  }
+
+  bool was_output = false;
+  template<class t>
+  void output(t a){
+    if(was_output)cout << " ";
+    cout << a;
+    was_output = true;
+  }
+  void outendl(){
+    was_output = false;
+    cout << endl;
+  }
+  ll in(){
+    ll res;
+    scanf("%lld", &res);
+    return res;
+  }
+
+  template<class t>
+  istream& operator>>(istream&is, vector<t>&x){
+    for(auto &i:x)is >> i;
+    return is;
+  }
+
+  template<class t, class u>
+  istream& operator>>(istream&is, pair<t, u>&x){
+    is >> x.first >> x.second;
+    return is;
+  }
+
+  template<class t>
+  void in(t&x){
+    cin >> x;
+  }
+
+  template<class t>
+  t in(){
+    t res; cin >> res; return res;
+  }
+
+  template<class t>
+  void out(t x){
+    cout << x;
+  }
+
+  template<class t>
+  vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
+    sort(line.begin(),line.end(),comp);
+    return line;
+  }
+
+  template<class t>
+  vector<t> reversed(vector<t> line){
+    reverse(line.begin(),line.end());
+    return line;
+  }
 }
 
-ll modinv(ll x){
-  return modpow(x, MOD-2);
-}
-
-bool was_output = false;
-template<class t>
-void output(t a){
-  if(was_output)cout << " ";
-  cout << a;
-  was_output = true;
-}
-void outendl(){
-  was_output = false;
-  cout << endl;
-}
-ll in(){
-  ll res;
-  scanf("%lld", &res);
-  return res;
-}
-
-template<class t>
-istream& operator>>(istream&is, vector<t>&x){
-  for(auto &i:x)is >> i;
-  return is;
-}
-
-template<class t, class u>
-istream& operator>>(istream&is, pair<t, u>&x){
-  is >> x.first >> x.second;
-  return is;
-}
-
-template<class t>
-void in(t&x){
-  cin >> x;
-}
-
-template<class t>
-void out(t x){
-  cout << x;
-}
+using namespace templates;
 
 int main(){
   return 0;

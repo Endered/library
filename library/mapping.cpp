@@ -47,12 +47,19 @@ ll in(){
     return res;
 }
 
+template<class t>
+t in(){
+  t res;
+  cin >> res;
+  return res;
+}
+
 int main(){
     ll n;
     ll k;
     n = in();
     k = in();
-    vector<ll> health = collect(n,in);
+    vector<ll> health = collect(n,in<ll>);
     sort(all(health),greater<ll>());
     cout << accumulate(min(n,k)+all(health),0LL) << endl;
     return 0;

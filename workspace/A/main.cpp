@@ -26,116 +26,80 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #define debug(x) (void)0
 #endif
 
-ll modpow(ll x, ll b){
-  ll res = 1;
-  while(b){
-    if(b&1)res = res * x % MOD;
-    x = x * x % MOD;
-    b>>=1;
+namespace templates{
+  ll modpow(ll x, ll b){
+    ll res = 1;
+    while(b){
+      if(b&1)res = res * x % MOD;
+      x = x * x % MOD;
+      b>>=1;
+    }
+    return res;
   }
-  return res;
-}
 
-ll modinv(ll x){
-  return modpow(x, MOD-2);
-}
-
-bool was_output = false;
-template<class t>
-void output(t a){
-  if(was_output)cout << " ";
-  cout << a;
-  was_output = true;
-}
-void outendl(){
-  was_output = false;
-  cout << endl;
-}
-ll in(){
-  ll res;
-  scanf("%lld", &res);
-  return res;
-}
-
-template<class t>
-istream& operator>>(istream&is, vector<t>&x){
-  for(auto &i:x)is >> i;
-  return is;
-}
-
-template<class t, class u>
-istream& operator>>(istream&is, pair<t, u>&x){
-  is >> x.first >> x.second;
-  return is;
-}
-
-template<class t>
-void in(t&x){
-  cin >> x;
-}
-
-template<class t>
-void out(t x){
-  cout << x;
-}
-
-pii nil = pii(INF,INF);
-vector<pii> dirs = {{1,0},{0,1},{-1,0},{0,-1}};
-map<pii,vector<pii>> m;
-
-int char2dir(char d){
-  if(d=='R')return 0;
-  if(d=='U')return 1;
-  if(d=='L')return 2;
-  if(d=='D')return 3;
-  return -1;
-}
-
-pii operator+(pii a,pii b){
-  return {a.first+b.first,a.second+b.second};
-}
-
-
-pii move(pii pos,int dir){
-  if(m[pos].empty())m[pos].assign(dirs.size(),nil);
-  pii &res = m[pos][dir];
-  if(res==nil){
-    res = pos + dirs[dir];
+  ll modinv(ll x){
+    return modpow(x, MOD-2);
   }
-  return res;
-}
 
-void apply(pii pos){
-  int n = dirs.size();
-  rep(front,n/2){
-    int back = front+n/2;
-    pii front_p = move(pos,front);
-    pii back_p = move(pos,back);
-    vector<pii>& front_it = m[front_p];
-    vector<pii>& back_it = m[back_p];
-    if(front_it.empty())front_it.assign(n,nil);
-    if(back_it.empty())back_it.assign(n,nil);
-    front_it[back] = back_p;
-    back_it[front] = front_p;
+  bool was_output = false;
+  template<class t>
+  void output(t a){
+    if(was_output)cout << " ";
+    cout << a;
+    was_output = true;
+  }
+  void outendl(){
+    was_output = false;
+    cout << endl;
+  }
+  ll in(){
+    ll res;
+    scanf("%lld", &res);
+    return res;
+  }
+
+  template<class t>
+  istream& operator>>(istream&is, vector<t>&x){
+    for(auto &i:x)is >> i;
+    return is;
+  }
+
+  template<class t, class u>
+  istream& operator>>(istream&is, pair<t, u>&x){
+    is >> x.first >> x.second;
+    return is;
+  }
+
+  template<class t>
+  void in(t&x){
+    cin >> x;
+  }
+
+  template<class t>
+  t in(){
+    t res; cin >> res; return res;
+  }
+
+  template<class t>
+  void out(t x){
+    cout << x;
+  }
+
+  template<class t>
+  vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
+    sort(line.begin(),line.end(),comp);
+    return line;
+  }
+
+  template<class t>
+  vector<t> reversed(vector<t> line){
+    reverse(line.begin(),line.end());
+    return line;
   }
 }
 
-pii func(pii pos,int dir){
-  pii res = move(pos,dir);
-  apply(res);
-  return res;
-}
-
+using namespace templates;
 
 int main(){
-  pii cp = {0,0};
-  int k = in();
-  string str;
-  in(str);
-  apply(cp);
-  foreach(i,str){
-    cp = func(cp,char2dir(i));
-  }
-  cout << cp.first << " " << cp.second << endl;
   return 0;
 }

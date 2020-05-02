@@ -26,97 +26,80 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #define debug(x) (void)0
 #endif
 
-ll modpow(ll x, ll b){
-  ll res = 1;
-  while(b){
-    if(b&1)res = res * x % MOD;
-    x = x * x % MOD;
-    b>>=1;
+namespace templates{
+  ll modpow(ll x, ll b){
+    ll res = 1;
+    while(b){
+      if(b&1)res = res * x % MOD;
+      x = x * x % MOD;
+      b>>=1;
+    }
+    return res;
   }
-  return res;
-}
 
-ll modinv(ll x){
-  return modpow(x, MOD-2);
-}
+  ll modinv(ll x){
+    return modpow(x, MOD-2);
+  }
 
-bool was_output = false;
-template<class t>
-void output(t a){
-  if(was_output)cout << " ";
-  cout << a;
-  was_output = true;
-}
-void outendl(){
-  was_output = false;
-  cout << endl;
-}
-ll in(){
-  ll res;
-  scanf("%lld", &res);
-  return res;
-}
+  bool was_output = false;
+  template<class t>
+  void output(t a){
+    if(was_output)cout << " ";
+    cout << a;
+    was_output = true;
+  }
+  void outendl(){
+    was_output = false;
+    cout << endl;
+  }
+  ll in(){
+    ll res;
+    scanf("%lld", &res);
+    return res;
+  }
 
-template<class t>
-istream& operator>>(istream&is, vector<t>&x){
-  for(auto &i:x)is >> i;
-  return is;
-}
+  template<class t>
+  istream& operator>>(istream&is, vector<t>&x){
+    for(auto &i:x)is >> i;
+    return is;
+  }
 
-template<class t, class u>
-istream& operator>>(istream&is, pair<t, u>&x){
-  is >> x.first >> x.second;
-  return is;
-}
+  template<class t, class u>
+  istream& operator>>(istream&is, pair<t, u>&x){
+    is >> x.first >> x.second;
+    return is;
+  }
 
-template<class t>
-void in(t&x){
-  cin >> x;
-}
+  template<class t>
+  void in(t&x){
+    cin >> x;
+  }
 
-template<class t>
-void out(t x){
-  cout << x;
-}
+  template<class t>
+  t in(){
+    t res; cin >> res; return res;
+  }
 
-int n;
-vvector<pii> edges;
-int x;
+  template<class t>
+  void out(t x){
+    cout << x;
+  }
 
-void setup(){
-  n = in();
-  x = in();
-  edges.resize(n);
-  rep(i,n-1){
-    int a = in() - 1;
-    int b = in() - 1;
-    int c = in();
-    edges[a].emplace_back(b,c);
-    edges[b].emplace_back(a,c);
+  template<class t>
+  vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
+    sort(line.begin(),line.end(),comp);
+    return line;
+  }
+
+  template<class t>
+  vector<t> reversed(vector<t> line){
+    reverse(line.begin(),line.end());
+    return line;
   }
 }
 
-
-ll solve(){
-  ll ans = 0;
-  map<int,ll> m;
-  m[0]=1;
-  function<void(int,int,int)> func =
-    [&](int place,int last,int sum){
-      foreach(i,edges[place]){
-        if(i.first==last)continue;
-        ans += m.count(sum^x^i.second)?m[sum^x^i.second]:0;
-        ++m[sum^i.second];
-        func(i.first,place,sum^i.second);
-      }
-    };
-  func(0,-1,0);
-  return ans;
-}
+using namespace templates;
 
 int main(){
-  setup();
-
-  cout << solve() << endl;
   return 0;
 }
