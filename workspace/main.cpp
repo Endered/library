@@ -2,16 +2,18 @@
 #define rep(i,a,...) for(int i = (a)*(strlen(#__VA_ARGS__)!=0);i<(int)(strlen(#__VA_ARGS__)?__VA_ARGS__:(a));++i)
 #define per(i,a,...) for(int i = (strlen(#__VA_ARGS__)?__VA_ARGS__:(a))-1;i>=(int)(strlen(#__VA_ARGS__)?(a):0);--i)
 #define foreach(i, n) for(auto &i:(n))
-#define pii pair<int, int>
-#define pll pair<long long, long long>
 #define all(x) (x).begin(), (x).end()
 #define bit(x) (1ll << (x))
+#define lambda(RES_TYPE, ...) (function<RES_TYPE(__VA_ARGS__)>)[&](__VA_ARGS__) -> RES_TYPE
+#define method(FUNC_NAME, RES_TYPE, ...) function<RES_TYPE(__VA_ARGS__)> FUNC_NAME = lambda(RES_TYPE, __VA_ARGS__)
+using namespace std;
 using ll = long long;
+using pii = pair<int,int>;
+using pll = pair<ll,ll>;
 //const ll MOD = (ll)1e9+7;
 const ll MOD = 998244353;
 const int INF = (ll)1e9+7;
 const ll INFLL = (ll)1e18;
-using namespace std;
 template<class t>
 using vvector = vector<vector<t>>;
 template<class t>
@@ -68,11 +70,6 @@ namespace templates{
   istream& operator>>(istream&is, pair<t, u>&x){
     is >> x.first >> x.second;
     return is;
-  }
-
-  template<class t>
-  void in(t&x){
-    cin >> x;
   }
 
   template<class t>
