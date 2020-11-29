@@ -29,11 +29,11 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #endif
 
 namespace templates{
-  ll modpow(ll x, ll b){
+  ll modpow(ll x, ll b,ll mod=MOD){
     ll res = 1;
     while(b){
-      if(b&1)res = res * x % MOD;
-      x = x * x % MOD;
+      if(b&1)res = res * x % mod;
+      x = x * x % mod;
       b>>=1;
     }
     return res;
@@ -56,7 +56,7 @@ namespace templates{
   }
   ll in(){
     ll res;
-    scanf("%lld", &res);
+    cin >> res;
     return res;
   }
 

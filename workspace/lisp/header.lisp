@@ -1,5 +1,6 @@
 #-swank
 (unless (member :child-sbcl *features*)
+  "I refered from https://competitive12.blogspot.com/2020/03/common-lisp.html thank you!"
   (quit
    :unix-status
    (process-exit-code
