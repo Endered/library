@@ -29,74 +29,98 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #endif
 
 namespace templates{
-  ll modpow(ll x, ll b,ll mod=MOD){
-    ll res = 1;
-    while(b){
-      if(b&1)res = res * x % mod;
-      x = x * x % mod;
-      b>>=1;
+    ll modpow(ll x, ll b,ll mod=MOD){
+        ll res = 1;
+        while(b){
+            if(b&1)res = res * x % mod;
+            x = x * x % mod;
+            b>>=1;
+        }
+        return res;
     }
-    return res;
-  }
 
-  ll modinv(ll x){
-    return modpow(x, MOD-2);
-  }
+    ll modinv(ll x){
+        return modpow(x, MOD-2);
+    }
 
-  bool was_output = false;
-  template<class t>
-  void output(t a){
-    if(was_output)cout << " ";
-    cout << a;
-    was_output = true;
-  }
-  void outendl(){
-    was_output = false;
-    cout << endl;
-  }
-  ll in(){
-    ll res;
-    cin >> res;
-    return res;
-  }
+    bool was_output = false;
+    template<class t>
+    void output(t a){
+        if(was_output)cout << " ";
+        cout << a;
+        was_output = true;
+    }
+    void outendl(){
+        was_output = false;
+        cout << endl;
+    }
 
-  template<class t>
-  istream& operator>>(istream&is, vector<t>&x){
-    for(auto &i:x)is >> i;
-    return is;
-  }
+    template<class t>
+    istream& operator>>(istream&is, vector<t>&x){
+        for(auto &i:x)is >> i;
+        return is;
+    }
 
-  template<class t, class u>
-  istream& operator>>(istream&is, pair<t, u>&x){
-    is >> x.first >> x.second;
-    return is;
-  }
+    template<class t, class u>
+    istream& operator>>(istream&is, pair<t, u>&x){
+        is >> x.first >> x.second;
+        return is;
+    }
 
-  template<class t>
-  t in(){
-    t res; cin >> res; return res;
-  }
+    template<class t>
+    ostream& operator<<(ostream&os, vector<t> &v){
+        os << "{";
+        for(t &i:v){
+            os << i << ", ";
+        }
+        os << "}";
+        return os;
+    }
 
-  template<class t>
-  void out(t x){
-    cout << x;
-  }
+    template<class t = long long>
+    t in(){
+        t res; cin >> res; return res;
+    }
 
-  template<class t>
-  vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
-    sort(line.begin(),line.end(),comp);
-    return line;
-  }
+    template<class t>
+    void out(t x){
+        cout << x;
+    }
 
-  template<class t>
-  vector<t> reversed(vector<t> line){
-    reverse(line.begin(),line.end());
-    return line;
-  }
+
+    template<class t>
+    vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
+        sort(line.begin(),line.end(),comp);
+        return line;
+    }
+
+    template<class t>
+    vector<t> reversed(vector<t> line){
+        reverse(line.begin(),line.end());
+        return line;
+    }
+    string reversed(string str){
+        reverse(str.begin(),str.end());
+        return str;
+    }
+
+    long long gcd(long long a,long long b){
+        while(b){
+            a %= b;
+            swap(a,b);
+        }
+        return a;
+    }
+
+    long long lcm(long long a,long long b){
+        return a / gcd(a,b) * b;
+    }
 }
 
 using namespace templates;
 
 int main(){
-  return 0;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    return 0;
 }

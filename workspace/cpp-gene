@@ -4,6 +4,9 @@
 
 names=`echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' | fold -s1`
 
+echo -e "#!/bin/bash \n make \n for i in *in \n do \n echo \$i \n ./a.out < \$i \n done" > test.sh
+chmod u+x test.sh
+
 read last
 
 for name in $names
@@ -11,7 +14,10 @@ do
     mkdir $name
     cp main.cpp $name
     cp Makefile $name
+    cp test.sh $name
     if [ "$name" == "$last" ]; then
         break
     fi
 done
+
+rm test.sh

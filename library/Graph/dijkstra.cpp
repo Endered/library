@@ -47,38 +47,49 @@ void outendl(){
 	cout << endl;
 }
 
+template <class type = long long>
 class dijkstra{
 public:
+    using E = pair<int,type>;
+    using S = pair<type,int>;
 	int n;
-	vvector<pll> edges;
-	vector<ll> fast;
-	dijkstra(int N):n(N){
+	vvector<E> edges;
+	vector<type> fast;
+    type inf;
+	dijkstra(int N,type inf=numeric_limits<type>::max()>>1):n(N),inf(inf){
 		edges.resize(n);
 	}
 
-	void add_edge(int from, int to, ll cost){
+	void add_edge(int from, int to, type cost, bool rev=false){
 		edges[from].emplace_back(to, cost);
+        if(rev){
+            edges[to].emplace_back(from, cost);
+        }
 	}
 
 	void solve(int start){
-		priority_queuer<pll> pq;
-		fast.assign(n, INFLL);
+		priority_queuer<S> pq;
+		fast.assign(n, inf);
 		pq.emplace(0, 0);
 		fast[start] = 0;
 		pq.emplace(0, start);
 		while(pq.size()){
-			pll d = pq.top();
+			S d = pq.top();
 			pq.pop();
 			if(d.first!=fast[d.second])continue;
-			foreach(i, edges[d.second]){
-				ll next_time = d.first + i.second;
-				int to = i.first;
+            for(E e:edges[d.second]){
+				type next_time = d.first + e.second;
+				int to = e.first;
 				if(fast[to] <= next_time)continue;
 				fast[to] = next_time;
 				pq.emplace(next_time, to);
 			}
 		}
 	}
+
+    type operator[](int p){
+        return fast[p];
+    }
 };
 
 

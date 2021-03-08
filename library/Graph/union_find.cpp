@@ -51,8 +51,10 @@ class union_find{
 public:
 	int n;
 	vector<int> parent;
+    vector<int> has;
 	union_find(int _n):n(_n){
 		parent.resize(n);
+        has.assign(n,1);
 		rep(i, n){
 			parent[i]=i;
 		}
@@ -73,8 +75,13 @@ public:
 		int ap = get_parent(a);
 		int bp = get_parent(b);
 		if(ap==bp)return;
+        has[ap] += has[bp];
 		parent[bp] = ap;
 	}
+
+    int get_has(int p){
+        return has[get_parent(p)];
+    }
 
 };
 

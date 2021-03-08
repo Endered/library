@@ -28,6 +28,84 @@ template<class t, class u> bool chmin(t &a, u b){if(a>b){a=b;return true;}return
 #define debug(x) (void)0
 #endif
 
+//https://onlinejudge.u-aizu.ac.jp/problems/2677
+template<class cost = long long>
+class lowest_common_ancestor{
+public:
+    using E = pair<int,cost>;
+    int n;
+    vector<vector<E>> edges;
+    int log2;
+    vector<vector<int>> ancests;
+    vector<cost> dists;
+    vector<int> heights;
+
+    lowest_common_ancestor(int n):n(n),edges(n){
+        log2 = 1;
+        while((1<<log2)<=n)++log2;
+    }
+
+    void add_edge(int u,int v,cost c=1){
+        edges[u].emplace_back(v,c);
+        edges[v].emplace_back(u,c);
+    }
+    
+    inline int height(int p){
+        return heights[p];
+    }
+
+    void build(int root){
+        ancests.assign(n,vector<int>(log2,-1));
+        dists.assign(n,0);
+        heights.assign(n,-1);
+        stack<int> st;
+        st.emplace(root);
+        dists[root] = 0;
+        heights[root] = 0;
+        ancests[root][0] = root;
+        while(st.size()){
+            int p = st.top();st.pop();
+            for(auto e:edges[p]){
+                if(heights[e.first]>=0)continue;
+                dists[e.first] = dists[p] + e.second;
+                heights[e.first] = heights[p] + 1;
+                ancests[e.first][0] = p;
+                st.emplace(e.first);
+            }
+        }
+    }
+
+    int ancests_time(int p,int k){
+        if(k==0){
+            return ancests[p][0];
+        }
+        int &it = ancests[p][k];
+        if(it >= 0)return it;
+        return it = ancests_time(ancests_time(p,k-1),k-1);
+    }
+
+    inline cost dist(int p){
+        return dists[p];
+    }
+
+    cost dist(int p,int q){
+        cost res = dist(p) + dist(q);
+        if(height(p) < height(q))swap(p,q);
+        for(int i=log2-1;i>=0;--i){
+            if(height(p)-height(q)<(1<<i))continue;
+            p = ancests_time(p,i);
+        }
+        for(int i=log2-1;i>=0;--i){
+            if(ancests_time(p,i)==ancests_time(q,i))continue;
+            p = ancests_time(p,i);
+            q = ancests_time(q,i);
+        }
+        if(p!=q)p=q=ancests_time(p,0);
+        res -= dist(p) * 2;
+        return res;
+    }
+};
+
 namespace templates{
     ll modpow(ll x, ll b,ll mod=MOD){
         ll res = 1;
@@ -119,9 +197,42 @@ namespace templates{
 
 using namespace templates;
 
+
+ll func(){
+    int n = in();
+    vvector<int> childs(n);
+    lowest_common_ancestor<ll> lca(n);
+    rep(i,n-1){
+        int p = in()-1;
+        childs[p].emplace_back(i+1);
+        lca.add_edge(p,i+1,1);
+    }
+    vector<int> order;
+    {
+        vector<int> has;
+        has.emplace_back(0);
+        while(has.size()){
+            order.insert(order.end(),all(has));
+            vector<int> next;
+            foreach(i,has){
+                sort(all(childs[i]));
+                next.insert(next.end(),all(childs[i]));
+            }
+            has = next;
+        }
+    }
+    ll res = 0;
+    lca.build(0);
+    rep(i,order.size()-1){
+        res += lca.dist(order[i],order[i+1]);
+    }
+    return res;
+}
+
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    cout << func() << endl;
     return 0;
 }
 

@@ -26,6 +26,37 @@
                  (progn 
                    ,@expr))))))
 
+(defmacro test ((func &body args) &optional (out-stream))
+  (let ((evaled-args (gensym)))
+    `(let ((,evaled-args (list ,@args)))
+       (format t "~w: ~w ~%" `(,',func ,@,evaled-args) (apply #',func ,evaled-args)))))
+
+(defmacro dplabels (funcs &body body)
+  (let ((tables (loop for func in funcs collect (gensym))))
+    `(let ,(mapcar (lambda (table) `(,table (make-hash-table :test #'equal)))
+            tables)
+       (labels ,(mapcar (lambda (func table)
+                          (let ((name (first func))
+                                (args (second func))
+                                (body (cddr func))
+                                (ok (gensym))
+                                (val (gensym)))
+                            `(,name ,args
+                                    (multiple-value-bind (,val ,ok)
+                                      (gethash (list ,@args) ,table)
+                                      (if ,ok ,val
+                                          (setf (gethash (list ,@args) ,table)
+                                                (progn ,@body)))))))
+                        funcs tables)
+         ,@body))))
+
+(defmacro dpfun (name args &body body)
+  (let ((f (gensym)))
+    `(dplabels ((,f ,args ,@body))
+       (defun ,name (&rest args)
+         (apply #',f args)))))
+
+
 (defun split (x str)
   (let ((pos (search x str))
         (size (length x)))
@@ -46,6 +77,19 @@
 
 (defmacro awhen (expr &rest then)
   `(aif ,expr (progn ,@then) nil))
+
+(defmacro with-change (changes &body body)
+  (let ((backups (loop for _ in changes collect (gensym)))
+	(next-values (loop for _ in changes collect (gensym))))
+    `(let ,(append (mapcar #'list backups (mapcar #'first changes))
+		   (mapcar #'list next-values (mapcar #'second changes)))
+       (unwind-protect
+	    (progn
+	      ,@(mapcar (lambda (change value) `(setf ,(first change) ,value)) changes next-values)
+	      ,@body)
+	 ,@ (mapcar (lambda (change backup)
+		      `(setf ,(first change) ,backup))
+		    (reverse changes) (reverse backups))))))
 
 (defun comulative (function list &key base)
   (if base
@@ -166,7 +210,7 @@
       (aref table x))))
 
 
-(defparameter +MOD+ (print (+ 7 (expt 10 9))))
+(defparameter +MOD+ (+ 7 (expt 10 9)))
 (defmacro mod+ (&body args)
   (reduce (lambda (a b) `(mod (+ ,a ,b) +MOD+))
           args))
