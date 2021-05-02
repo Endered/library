@@ -44,61 +44,114 @@ namespace templates{
     }
 
     bool was_output = false;
-    template<class t>
-    void output(t a){
-        if(was_output)cout << " ";
-        cout << a;
-        was_output = true;
+
+    void print();
+    template <class t> void print(vector<t>);
+    template <class t, class u> void print(pair<t, u>);
+    template <class t> void print(t);
+    template <class Head, class... Tail> void print(Head&&, Tail&&...);
+
+    template <class t> void println(vector<vector<t>>);
+    template <class t> void println(vector<t>);
+    template <class t> void println(t);
+    template <class Head, class... Tail> void println(Head&&, Tail&&...);
+    void println();
+    void newline();
+
+    void print(){
+        return;
     }
-    void outendl(){
-        was_output = false;
-        cout << endl;
+
+    template <class t>
+        void print(vector<t> x){
+            for(const t&i:x)print(i);
+        }
+    template <class t, class u>
+        void print(pair<t,u> p){
+            print(p.first);
+            print(p.second);
+        }
+    template <class t>
+        void print(t x){
+            if(was_output)cout<<" ";
+            cout<<x;
+            was_output = true;
+        }
+    template <class Head, class... Tail>
+        void print(Head&&head,Tail&&...tail){
+            print(head);
+            print(tail...);
+        }
+
+    template<class t>
+        void println(vector<vector<t>> x){
+            for(const vector<t> &i:x)println(i);
+        }
+    template<class t>
+        void println(vector<t> x){
+            for(const t &i:x)print(i);
+            println();
+        }
+    template <class t>
+        void println(t x){
+            print(x);
+            println();
+        }
+    void println(){
+        if(was_output){
+            cout << endl;
+            was_output = false;
+        }
+    }
+    template <class Head, class... Tail>
+        void println(Head&&head,Tail&&...tail){
+            print(head);
+            println(std::forward<Tail>(tail)...);
+        }
+
+    void newline(){
+        was_output = true;
+        println();
     }
 
     template<class t>
-    istream& operator>>(istream&is, vector<t>&x){
-        for(auto &i:x)is >> i;
-        return is;
-    }
+        istream& operator>>(istream&is, vector<t>&x){
+            for(auto &i:x)is >> i;
+            return is;
+        }
 
     template<class t, class u>
-    istream& operator>>(istream&is, pair<t, u>&x){
-        is >> x.first >> x.second;
-        return is;
-    }
+        istream& operator>>(istream&is, pair<t, u>&x){
+            is >> x.first >> x.second;
+            return is;
+        }
 
     template<class t>
-    ostream& operator<<(ostream&os, vector<t> &v){
-        os << "{";
-        for(t &i:v){
-            os << i << ", ";
+        ostream& operator<<(ostream&os, vector<t> &v){
+            os << "{";
+            for(t &i:v){
+                os << i << ", ";
+            }
+            os << "}";
+            return os;
         }
-        os << "}";
-        return os;
-    }
 
     template<class t = long long>
-    t in(){
-        t res; cin >> res; return res;
-    }
+        t in(){
+            t res; cin >> res; return res;
+        }
 
     template<class t>
-    void out(t x){
-        cout << x;
-    }
-
-
-    template<class t>
-    vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
-        sort(line.begin(),line.end(),comp);
-        return line;
-    }
+        vector<t> sorted(vector<t> line,function<bool(t,t)> comp=[](t a,t b){return a<b;}){
+            sort(line.begin(),line.end(),comp);
+            return line;
+        }
 
     template<class t>
-    vector<t> reversed(vector<t> line){
-        reverse(line.begin(),line.end());
-        return line;
-    }
+        vector<t> reversed(vector<t> line){
+            reverse(line.begin(),line.end());
+            return line;
+        }
     string reversed(string str){
         reverse(str.begin(),str.end());
         return str;
@@ -115,6 +168,16 @@ namespace templates{
     long long lcm(long long a,long long b){
         return a / gcd(a,b) * b;
     }
+
+
+    class output_initializer{
+        public:
+            output_initializer(){
+                ios::sync_with_stdio(false);
+                cin.tie(nullptr);
+                cout << setprecision(20);
+            }
+    };output_initializer OUTPUT_INITIALIZER_INSTANCE = output_initializer();
 }
 
 using namespace templates;
