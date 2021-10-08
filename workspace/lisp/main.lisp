@@ -260,3 +260,23 @@
   (defun println (value &optional (stream *standard-output*))
     (printer value stream)
     (newline stream)))
+
+(defmacro nest (&body body)
+  (reduce
+   (lambda (a b)
+     `(,@a ,b))
+   (mapcar (lambda (body)
+	     (cond ((eq (car body) 'nest)
+		    `(progn ,@body))
+		   (t body)))
+	   body)
+   :from-end t))
+
+(defmacro bind (symbol value &body body)
+  `(let ((,symbol ,value))
+     ,@body))
+
+(defmacro assign (symbol value &body body)
+  `(progn
+     (setf ,symbol ,value)
+     ,@body))
