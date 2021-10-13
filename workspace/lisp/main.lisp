@@ -113,8 +113,6 @@
 (defun arithmetic-mean (&rest body)
   (/ (apply #'+ body) (length body)))
 
-(defvar +MOD+ (+ (expt 10 9) 7))
-
 (defun range-0-n (n &optional (step 1))
   (loop for i from 0 below n by step collect i))
 
@@ -211,6 +209,7 @@
 
 
 (defparameter +MOD+ (+ 7 (expt 10 9)))
+
 (defmacro mod+ (&body args)
   (reduce (lambda (a b) `(mod (+ ,a ,b) +MOD+))
           args))
@@ -279,4 +278,8 @@
 (defmacro assign (symbol value &body body)
   `(progn
      (setf ,symbol ,value)
+     ,@body))
+
+(defmacro label ((name args &body label-body) &body body)
+  `(labels ((,name ,args ,@label-body))
      ,@body))
