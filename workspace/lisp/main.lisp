@@ -266,7 +266,7 @@
      `(,@a ,b))
    (mapcar (lambda (body)
 	     (cond ((eq (car body) 'nest)
-		    `(progn ,@body))
+		    `(progn ,body))
 		   (t body)))
 	   body)
    :from-end t))
