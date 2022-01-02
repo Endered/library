@@ -1,3 +1,4 @@
+;;; begin of definition avl-tree
 (defpackage :avl-tree
   (:use :cl)
   (:export
@@ -23,25 +24,35 @@
 	 (node-balance (intern (format nil "~:@(~a-balance~)" node)))
 	 (node-make-balance-left (intern (format nil "~:@(~a-make-balance-left~)" node)))
 	 (node-make-balance-right (intern (format nil "~:@(~a-make-balance-right~)" node)))
+	 (iter (intern (format nil "~:@(~a-iter~)" conc-name)))
+	 (iter-next (intern (format nil "~:@(~a-next~)" iter)))
+	 (iter-prev (intern (format nil "~:@(~a-prev~)" iter)))
+	 (iter-value (intern (format nil "~:@(~a-value~)" iter)))
+	 (iter-eq (intern (format nil "~:@(~a-eq~)" iter)))
 	 (%make-set (intern (format nil "~:@(%make-~a~)" conc-name)))
 	 (make-set (intern (format nil "~:@(make-~a~)" conc-name)))
 	 (set-insert (intern (format nil "~:@(~a-insert~)" conc-name)))
 	 (set-erase (intern (format nil "~:@(~a-erase~)" conc-name)))
 	 (set-find (intern (format nil "~:@(~a-find~)" conc-name)))
+	 (set-min (intern (format nil "~:@(~a-min~)" conc-name)))
+	 (set-max (intern (format nil "~:@(~a-max~)" conc-name)))
+	 (set-upper-bound (intern (format nil "~:@(~a-upper-bound~)" conc-name)))
+	 (set-lower-bound (intern (format nil "~:@(~a-lower-bound~)" conc-name)))
 	 (set-has (intern (format nil "~:@(~a-has~)" conc-name)))
-	 (set-size (intern (format nil "~:@(~a-size~)" conc-name))))
+	 (set-size (intern (format nil "~:@(~a-size~)" conc-name)))
+	 )
     `(progn
        (defstruct ,node
 	 (left-child nil :type (or null ,node))
 	 (right-child nil :type (or null ,node))
 	 (value nil :type ,element-type)
-	 (height 0 :type (integer 0)))
+	 (height 1 :type (integer 0)))
        (defun ,node-update-height (node)
 	 (declare (,node node))
 	 (with-slots (height left-child right-child) node
 	   (setf height
-		 (max (if left-child (1+ (,node-height left-child)) 0)
-		      (if right-child (1+ (,node-height right-child)) 0)))))
+		 (1+ (max (if left-child (,node-height left-child) 0)
+			  (if right-child (,node-height right-child) 0))))))
        (defun ,node-balance (node)
 	 (declare (,node node))
 	 (with-slots (left-child right-child) node
@@ -81,6 +92,58 @@
 		    (setf (,node-left-child node) (,node-rotate-left left)))
 		  (,node-rotate-right node)))
 	       (t node)))
+       (defun ,iter-next (iter)
+	 (declare (list iter))
+	 (unless iter (return-from ,iter-next nil))
+	 (labels ((min-iter (iter)
+		    (let* ((node (car iter))
+			   (left (,node-left-child node)))
+		      (if left
+			  (min-iter (cons left iter))
+			  iter)))
+		  (right-down (iter)
+		    (let* ((node (car iter))
+			   (right (,node-right-child node)))
+		      (when right
+			(min-iter (cons right iter)))))
+		  (up-parent (iter)
+		    (when (cdr iter)
+		      (destructuring-bind
+			  (last . next) iter
+			(if (eq last (,node-left-child (car next)))
+			    next
+			    (up-parent next))))))
+	   (or (right-down iter) (up-parent iter))))
+       (defun ,iter-prev (iter)
+	 (declare (list iter))
+	 (unless iter (return-from ,iter-prev nil))
+	 (labels ((max-iter (iter)
+		    (let* ((node (car iter))
+			   (right (,node-right-child node)))
+		      (if right
+			  (max-iter (cons right iter))
+			  iter)))
+		  (left-down (iter)
+		    (let* ((node (car iter))
+			   (left (,node-left-child node)))
+		      (when left
+			(max-iter (cons left iter)))))
+		  (up-parent (iter)
+		    (when (cdr iter)
+		      (destructuring-bind
+			  (last . next) iter
+			(if (eq last (,node-right-child (car next)))
+			    next
+			    (up-parent next))))))
+	   (or (left-down iter) (up-parent iter))))
+       (defun ,iter-value (iter)
+	 (declare (list iter))
+	 (unless iter (error "ERROR INVALID ITERATOR"))
+	 (,node-value (car iter)))
+       (defun ,iter-eq (iter1 iter2)
+	 (declare (list iter1 iter2))
+	 (or (and (null iter1) (null iter2))
+	     (eq (car iter1) (car iter2))))
        (defstruct (,set (:constructor ,%make-set))
 	 (root nil :type (or null ,node))
 	 (count 0 :type (integer 0)))
@@ -103,7 +166,8 @@
 			       (setf right-child (rec right-child))
 			       (,node-update-height node)
 			       (,node-make-balance-left node))
-			      (t node)))))
+			      (t (setf (,node-value node) key)
+				 node)))))
 	     (setf root (rec root)))))
        (defun ,set-erase (set key)
 	 (declare (,set set) (,element-type key))
@@ -138,18 +202,71 @@
 			    (,node-value node)))))
 	     (setf root (rec root key)))))
        (defun ,set-find (set key)
+	 (declare (,set set) (,element-type key))
 	 (with-slots (root) set
-	   (labels ((rec (node)
+	   (let ((iter nil))
+	     (labels ((rec (node)
+			(declare ((or null ,node) node))
+			(unless node (return-from rec nil))
+			(push node iter)
+			(with-slots (left-child right-child value) node
+			  (cond ((funcall ,compare key value)
+				 (rec left-child))
+				((funcall ,compare value key)
+				 (rec right-child))
+				(t
+				 iter)))))
+	       (rec root)))))
+       (defun ,set-min (set)
+	 (declare (,set set))
+	 (with-slots (root) set
+	   (let ((iter nil))
+	     (labels ((rec (node)
+			(declare ((or null ,node) node))
+			(cond (node
+			       (push node iter)
+			       (rec (,node-left-child node)))
+			      (t iter))))
+	       (rec root)))))
+       (defun ,set-max (set)
+	 (declare (,set set))
+	 (with-slots (root) set
+	   (let ((iter nil))
+	     (labels ((rec (node)
+			(declare ((or null ,node) node))
+			(cond (node
+			       (push node iter)
+			       (rec (,node-right-child node)))
+			      (t iter))))
+	       (rec root)))))
+       (defun ,set-lower-bound (set key)
+	 (declare (,set set) (,element-type key))
+	 (with-slots (root) set
+	   (labels ((rec (node iter)
 		      (declare ((or null ,node) node))
 		      (unless node (return-from rec nil))
 		      (with-slots (left-child right-child value) node
-			(cond ((funcall ,compare key value)
-			       (rec left-child))
-			      ((funcall ,compare value key)
-			       (rec right-child))
-			      (t
-			       node)))))
-	     (rec root))))
+			(let ((next (cons node iter)))
+			  (cond ((funcall ,compare key value)
+				 (or (rec left-child next) next))
+				((funcall ,compare value key)
+				 (rec right-child next))
+				(t next))))))
+	     (rec root nil))))
+       (defun ,set-upper-bound (set key)
+	 (declare (,set set) (,element-type key))
+	 (with-slots (root) set
+	   (labels ((rec (node iter)
+		      (declare ((or null ,node) node))
+		      (unless node (return-from rec nil))
+		      (with-slots (left-child right-child value) node
+			(let ((next (cons node iter)))
+			  (cond ((funcall ,compare key value)
+				 (or (rec left-child next) next))
+				((funcall ,compare value key)
+				 (rec right-child next))
+				(t nil))))))
+	     (rec root nil))))
        (defun ,set-has (set key)
 	 (declare (,set set) (,element-type key))
 	 (with-slots (root) set
@@ -164,22 +281,14 @@
 			      (t
 			       t)))))
 	     (rec root))))
-       )
-    )
-  )
+       (defun ,set-size (set)
+	 (declare (,set set))
+	 (with-slots (count) set
+	   count)))))
 
+;;; end of definition
 (in-package :cl-user)
+
 
 ;;(print (macroexpand-1 '(avl-tree:define-avl-set myset :element-type integer)))
 (avl-tree:define-avl-set myset :element-type integer)
-
-(defun main ()
-  #+swank(sb-profile:reset)
-  #+swank(sb-profile:profile "CL-USER")
-  (time (let* ((set (make-myset))
-	       (n 1000000))
-	  (dotimes (i n)
-	    (myset-insert set (mod (* i i) n)))))
-  #+swank(sb-profile:report))
-
-(main)
