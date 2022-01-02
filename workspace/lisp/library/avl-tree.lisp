@@ -286,9 +286,43 @@
 	 (with-slots (count) set
 	   count)))))
 
-;;; end of definition
 (in-package :cl-user)
+;;; end of definition
 
 
-;;(print (macroexpand-1 '(avl-tree:define-avl-set myset :element-type integer)))
-(avl-tree:define-avl-set myset :element-type integer)
+(avl-tree:define-avl-set binary-set :element-type integer :compare #'<)
+
+;; example
+(let ((set (make-binary-set)))
+  (binary-set-insert set 1)
+  (binary-set-insert set 3)
+  (binary-set-insert set 5)
+  (binary-set-erase set 3)
+  (print (binary-set-has set 1)) ;; t
+  (print (binary-set-has set 3)) ;; nil
+  (print (binary-set-count set)) ;; 2
+  (loop for i from 1 to 10
+	do
+	   (binary-set-insert set i))
+  (print (binary-set-count set)) ;; 10
+  (let* ((iter (binary-set-find set 9))
+	 (prev (binary-set-iter-prev iter))
+	 (next (binary-set-iter-next iter))
+	 (next2 (binary-set-iter-next next)))
+    (print (binary-set-iter-value iter)) ;; 9
+    (print (binary-set-iter-value prev)) ;; 8
+    (print (binary-set-iter-value next)) ;; 10
+    (print next2) ;; nil
+    ;; ERROR (print (binary-set-iter-value next2))
+    )
+  (let* ((iter (binary-set-lower-bound set 3)))
+    (print (binary-set-iter-value iter)) ;; 3
+    )
+  (let* ((iter (binary-set-upper-bound set 3)))
+    (print (binary-set-iter-value iter)) ;; 4
+    )
+  (print (binary-set-lower-bound set 11)) ;; nil
+  (print (binary-set-upper-bound set 10)) ;; nil
+  (print (binary-set-iter-value (binary-set-min set))) ;; 1
+  (print (binary-set-iter-value (binary-set-max set))) ;; 10
+  )
