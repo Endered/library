@@ -5,7 +5,7 @@ using namespace std;
 vector<pair<long long,long long>> prime_factorize(long long x){
 	using P = pair<long long,long long>;
 	vector<P> res;
-	for(int i=2;i*i<=x;++i){
+	for(long long i=2;i*i<=x;++i){
 		int cnt = 0;
 		while(x%i==0){
 			x /= i;
