@@ -56,50 +56,49 @@ void outendl(){
 template<class T,class U>
 class segment_tree{
 public:
-  using F = function<T(T,T)>;
-  using G = function<T(T,U)>;
-  F f;
-  G g;
-  int n;
-  vector<T> v;
-  T init;
-  segment_tree(int n_,T init_,F f_,G g_){
-    n=1;
-    while(n<n_)n<<=1;
-    n<<=1;
-    init = init_;
-    v.resize(n,init);
-    f = f_;
-    g = g_;
-  }
+    using F = function<T(T,T)>;
+    using G = function<T(T,U)>;
+    F f;
+    G g;
+    int n;
+    vector<T> v;
+    T init;
+    segment_tree(int n_,T init_,F f_,G g_){
+        n=1;
+        while(n<n_)n<<=1;
+        init = init_;
+        v.resize(n << 1,init);
+        f = f_;
+        g = g_;
+    }
 
-  void update(int t,U x){
-    update(0,n,1,t,x);
-  }
+    void update(int t,U x){
+        update(0,n,1,t,x);
+    }
 
-  void update(int lp,int rp,int p,int t,U x){
-    if(t<lp||rp<=t)return;
-    v[p] = g(v[p],x);
-    int mid = (lp+rp)>>1;
-    if(lp==mid)return;
-    update(lp,mid,p*2,t,x);
-    update(mid,rp,p*2+1,t,x);
-  }
+    void update(int lp,int rp,int p,int t,U x){
+        if(t<lp||rp<=t)return;
+        v[p] = g(v[p],x);
+        int mid = (lp+rp)>>1;
+        if(lp==mid)return;
+        update(lp,mid,p*2,t,x);
+        update(mid,rp,p*2+1,t,x);
+    }
 
-  T query(int l,int r){
-    return query(l,r,0,n,1);
-  }
+    T query(int l,int r){
+        return query(l,r,0,n,1);
+    }
 
-  T query(int l,int r,int lp,int rp,int p){
-    if(r<lp||rp<=l)return init;
-    T res = init;
-    int mid = (lp+rp)>>1;
-    if(l<=lp&&rp<=r)res = v[p];
-    if(lp==mid)return res;
-    res = f(res,query(l,r,lp,mid,p*2));
-    res = f(res,query(l,r,mid,rp,p*2+1));
-    return res;
-  }
+    T query(int l,int r,int lp,int rp,int p){
+        if(r<=lp||rp<=l)return init;
+        if(l<=lp&&rp<=r)return v[p];
+        int mid = (lp+rp)>>1;
+        if(lp==mid)return init;
+        T res = init;
+        res = f(res,query(l,r,lp,mid,p*2));
+        res = f(res,query(l,r,mid,rp,p*2+1));
+        return res;
+    }
 };
 
 
