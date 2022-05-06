@@ -1,5 +1,5 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell
   {
-    nativeBuildInputs = [pkgs.sbt pkgs.openjdk8 pkgs.metals];
+    nativeBuildInputs = with pkgs; [ clang_13 ];
   }
