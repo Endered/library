@@ -78,11 +78,14 @@ public:
 
     void update(int lp,int rp,int p,int t,U x){
         if(t<lp||rp<=t)return;
-        v[p] = g(v[p],x);
         int mid = (lp+rp)>>1;
-        if(lp==mid)return;
-        update(lp,mid,p*2,t,x);
-        update(mid,rp,p*2+1,t,x);
+        if(lp==mid){
+            v[p] = g(v[p],x);
+        }else{
+            update(lp,mid,p*2,t,x);
+            update(mid,rp,p*2+1,t,x);
+            v[p] = f(v[p*2],v[p*2+1]);
+        }
     }
 
     T query(int l,int r){
