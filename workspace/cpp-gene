@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ./remove-files
 
 names=`echo 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' | fold -s1`
 
-echo -e "#!/bin/bash \n make \n for i in *in \n do \n echo \$i \n ./a.out < \$i \n done" > test.sh
+echo -e "#!/usr/bin/env bash \n make \n for i in *in \n do \n echo \$i \n ./a.out < \$i \n done" > test.sh
 chmod u+x test.sh
 
 read last
